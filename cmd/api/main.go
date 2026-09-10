@@ -1,14 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	"time"
+
+	"github.com/zaman-hridoy/olx-api/internal/config"
 )
 
 
 func main() {
+
+	cfg := config.MustLoad()
+
+	fmt.Println("Starting olx server...", cfg.Env)
 
 	mux := http.NewServeMux()
 
@@ -20,7 +28,7 @@ func main() {
 
 
 	srv := http.Server{
-		Addr: ":8090",
+		Addr: ":" + os.Getenv("PORT"),
 		Handler: mux,
 		ReadTimeout: 3 * time.Second,
 		WriteTimeout: 5 * time.Second,
@@ -30,4 +38,6 @@ func main() {
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatalf("Server faild: %v", err)
 	}
+
+
 }
