@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	_ "net/http/pprof"
-	"os"
 	"time"
 
 	"github.com/zaman-hridoy/olx-api/internal/config"
+	"github.com/zaman-hridoy/olx-api/internal/handlers"
 )
 
 
@@ -16,19 +15,15 @@ func main() {
 
 	cfg := config.MustLoad()
 
-	fmt.Println("Starting olx server...", cfg.Env)
+	fmt.Println("Starting olx server...")
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status": "All OK"}`))
-	})
+	mux.HandleFunc("GET /health", handlers.Health)
 
 
 	srv := http.Server{
-		Addr: ":" + os.Getenv("PORT"),
+		Addr: ":" + cfg.Port,
 		Handler: mux,
 		ReadTimeout: 3 * time.Second,
 		WriteTimeout: 5 * time.Second,
