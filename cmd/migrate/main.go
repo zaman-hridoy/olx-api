@@ -28,13 +28,19 @@ func main() {
 		log.Fatalf("migration.new: %v", err)
 	}
 
+	fmt.Println("Migration started...")
+
 	switch os.Args[1] {
 	case "up":
-		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		err := m.Up();
+		fmt.Println(err)
+		if err != nil && err != migrate.ErrNoChange {
 			log.Fatalf("m.Up: %v\n", err)
 		}
 	case "down":
-		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+		err := m.Steps(-1);
+		fmt.Println(err)
+		if err != nil && err != migrate.ErrNoChange {
 			log.Fatalf("m.Down: %v\n", err)
 		}
 	case "force":
@@ -52,5 +58,5 @@ func main() {
 	default:
 		log.Fatalf("unknown command: %s\n", os.Args[1])
 	}
-	fmt.Println("Running Migration...")
+	fmt.Println("Migration done.")
 }

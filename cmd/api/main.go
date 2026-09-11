@@ -15,7 +15,7 @@ import (
 func main() {
 
 	cfg := config.MustLoad()
-	_, err := db.Connect(cfg.DatabaseUrl)
+	db, err := db.Connect(cfg.DatabaseUrl)
 	if err != nil {
 		log.Fatalf("DATABASE not Connected: %v", err)
 	}
@@ -26,6 +26,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /health", handlers.Health)
+	mux.HandleFunc("GET /listings", handlers.Listings(db))
 
 
 	srv := http.Server{
