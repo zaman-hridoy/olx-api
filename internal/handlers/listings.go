@@ -30,10 +30,11 @@ func NewListingHandler(db *sql.DB) *ListingHandler {
 }
 
 func (lh ListingHandler) GetListings(w http.ResponseWriter, r *http.Request) {
-	// get listing from db
-	rows, err := lh.db.Query(
+	ctx := r.Context()
+	//pg_sleep(20)
+	rows, err := lh.db.QueryContext(ctx,
 	`
-		SELECT id, title, description, price, city, created_at
+		SELECT id, title, description, price, city, created_at, 
 		FROM listings
 		ORDER BY created_at DESC
 		LIMIT 100
@@ -72,10 +73,10 @@ func (lh ListingHandler) GetListings(w http.ResponseWriter, r *http.Request) {
 
 
 func (lh ListingHandler) DeleteListing(w http.ResponseWriter, r *http.Request) {
-	
+	ctx := r.Context()
 	id := r.PathValue("id")
 
-	results, err := lh.db.Exec(`DELETE FROM listings WHERE id = $1`,id)
+	results, err := lh.db.ExecContext(ctx, `DELETE FROM listings WHERE id = $1`,id)
 	if err != nil {
 		log.Fatalf("[ERROR - DELETE LISTING]: %v", err)
 		http.Error(w, "internal error", http.StatusInternalServerError)
@@ -88,7 +89,7 @@ func (lh ListingHandler) DeleteListing(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "internal error", http.StatusInternalServerError)
 		return
 	}
-	
+
 
 	// w.WriteHeader(http.StatusNoContent)
 	fmt.Fprintf(w, "Listing id: %s, count: %d\n", id, count)
