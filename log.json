@@ -1,0 +1,11 @@
+{
+  "time": "2026-09-12T12:50:04.106451+06:00",
+  "level": "ERROR",
+  "source": {
+    "function": "github.com/zaman-hridoy/olx-api/internal/handlers.ListingHandler.GetListings",
+    "file": "/Users/zaman/Desktop/go-dev/olx-api/internal/handlers/listings.go",
+    "line": 47
+  },
+  "msg": "listing query error",
+  "error": "ERROR: syntax error at or near \"FROM\" (SQLSTATE 42601)"
+}
