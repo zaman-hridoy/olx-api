@@ -8,6 +8,8 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/zaman-hridoy/olx-api/internal/middleware"
 )
 
 type listing struct {
@@ -81,30 +83,31 @@ func (lh ListingHandler) GetListings(w http.ResponseWriter, r *http.Request) {
 
 func (lh ListingHandler) DeleteListing(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	request_id := middleware.GetRequestId(ctx)
 	id := r.PathValue("id")
 
-	lh.logger.Debug("debug log", "listing_id", id)
-	lh.logger.Info("Starting query", "listing_id", id)
-	lh.logger.Warn("warn log", "listing_id", id)
+	// lh.logger.Debug("debug log", "listing_id", id)
+	lh.logger.Info("Starting query", "listing_id", id, "request_id", request_id)
+	// lh.logger.Warn("warn log", "listing_id", id)
 
 	results, err := lh.db.ExecContext(ctx, `DELETE FROM listing WHERE id = $1`,id)
 	if err != nil {
 		// log.Fatalf("[ERROR - DELETE LISTING]: %v", err)
 		
-		lh.logger.Error("delete failed", "listing_id", id, "err", err)
+		lh.logger.Error("delete failed", "listing_id", id, "err", err, "request_id", request_id)
 		http.Error(w, "internal error", http.StatusInternalServerError)
 		return
 	}
 
 	count, err := results.RowsAffected()
 	if err != nil {
-		log.Fatalf("[ERROR - DELETE LISTING ROWS AFFTECTED]: %v", err)
+		log.Fatalf("[ERROR - DELETE LISTING ROWS AFFTECTED]: %v", err, )
 		http.Error(w, "internal error", http.StatusInternalServerError)
 		return
 	}
 
 
-	lh.logger.Info("Record deleted", "listing_id", id)
+	lh.logger.Info("Record deleted", "listing_id", id, "request_id", request_id)
 	// w.WriteHeader(http.StatusNoContent)
 	fmt.Fprintf(w, "Listing id: %s, count: %d\n", id, count)
 }

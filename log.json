@@ -1,11 +1,37 @@
-{
-  "time": "2026-09-12T12:50:04.106451+06:00",
-  "level": "ERROR",
-  "source": {
-    "function": "github.com/zaman-hridoy/olx-api/internal/handlers.ListingHandler.GetListings",
-    "file": "/Users/zaman/Desktop/go-dev/olx-api/internal/handlers/listings.go",
-    "line": 47
+[
+  {
+    "time": "2026-09-12T14:40:28.883735+06:00",
+    "level": "INFO",
+    "source": {
+      "function": "github.com/zaman-hridoy/olx-api/internal/handlers.ListingHandler.DeleteListing",
+      "file": "/Users/zaman/Desktop/go-dev/olx-api/internal/handlers/listings.go",
+      "line": 88
+    },
+    "msg": "Starting query",
+    "listing_id": "6f92ea25-0722-41fe-aa33-e33452416571"
   },
-  "msg": "listing query error",
-  "error": "ERROR: syntax error at or near \"FROM\" (SQLSTATE 42601)"
-}
+  {
+    "time": "2026-09-12T14:40:28.884721+06:00",
+    "level": "WARN",
+    "source": {
+      "function": "github.com/zaman-hridoy/olx-api/internal/handlers.ListingHandler.DeleteListing",
+      "file": "/Users/zaman/Desktop/go-dev/olx-api/internal/handlers/listings.go",
+      "line": 89
+    },
+    "msg": "warn log",
+    "listing_id": "6f92ea25-0722-41fe-aa33-e33452416571"
+  },
+  {
+    "time": "2026-09-12T14:40:29.590167+06:00",
+    "level": "ERROR",
+    "source": {
+      "function": "github.com/zaman-hridoy/olx-api/internal/handlers.ListingHandler.DeleteListing",
+      "file": "/Users/zaman/Desktop/go-dev/olx-api/internal/handlers/listings.go",
+      "line": 95
+    },
+    "msg": "delete failed",
+    "listing_id": "6f92ea25-0722-41fe-aa33-e33452416571",
+    "err": "ERROR: relation \"listing\" does not exist (SQLSTATE 42P01)",
+    "request_id": null
+  }
+]

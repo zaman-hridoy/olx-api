@@ -11,6 +11,7 @@ import (
 	"github.com/zaman-hridoy/olx-api/internal/config"
 	"github.com/zaman-hridoy/olx-api/internal/db"
 	"github.com/zaman-hridoy/olx-api/internal/handlers"
+	"github.com/zaman-hridoy/olx-api/internal/middleware"
 )
 
 
@@ -21,11 +22,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("DATABASE not Connected: %v", err)
 	}
-	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+	logHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		AddSource: true,
 		Level: slog.LevelInfo,
 	})
-	logger := slog.New(handler)
+	logger := slog.New(logHandler)
 	slog.SetDefault(logger)
 
 	fmt.Println("Database connected")
@@ -40,9 +41,11 @@ func main() {
 	mux.HandleFunc("DELETE /api/listings/{id}", lh.DeleteListing)
 
 
+	handler := middleware.RequestId(mux)
+
 	srv := http.Server{
 		Addr: ":" + cfg.Port,
-		Handler: mux,
+		Handler: handler,
 		ReadTimeout: 3 * time.Second,
 		WriteTimeout: 5 * time.Second,
 		IdleTimeout: 60 * time.Second,
