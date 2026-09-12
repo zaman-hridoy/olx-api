@@ -17,7 +17,7 @@ type listing struct {
 	ID			string		`json:"id"`
 	Title		string		`json:"title"`
 	Description	string		`json:"description"`
-	Price		string		`json:"Price"`
+	Price		int64		`json:"Price"`
 	City		string		`json:"city"`
 	CrteatedAt	time.Time	`json:"created_at"`
 }
@@ -112,4 +112,36 @@ func (lh ListingHandler) DeleteListing(w http.ResponseWriter, r *http.Request) {
 	lh.logger.Info("Record deleted", "listing_id", id, "request_id", request_id)
 	// w.WriteHeader(http.StatusNoContent)
 	fmt.Fprintf(w, "Listing id: %s, count: %d\n", id, count)
+}
+
+func (lh ListingHandler) CreateList(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	requestId := middleware.GetRequestId(ctx)
+	var req listing
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		lh.logger.Error("failed to decode", "request_id", requestId, "err", err)
+		httpx.Error(w, http.StatusBadRequest, "invalid body", httpx.CodeMalformedJson_400)
+		return
+	}
+
+
+	row := lh.db.QueryRowContext(ctx, `
+		INSERT INTO listings (title, description, price, city)
+		VALUES($1, $2, $3, $4)
+		RETURNING id, title, description, price, city, created_at
+	`, req.Title, req.Description, req.Price, req.City)
+
+	var newL listing
+	if err := row.Scan(&newL.ID, &newL.Title, &newL.Description, &newL.Price, &newL.City, &newL.CrteatedAt); err != nil {
+		lh.logger.Error("failed to insert", "request_id", requestId, "err", err)
+		httpx.Error(w, http.StatusInternalServerError, "someting went wrong", httpx.CodeInternalError_500)
+		return
+	}
+
+	lh.logger.Info("listing created", "request_id", requestId, "listing_id", newL.ID)
+	httpx.JSONP(w, http.StatusCreated, map[string]any{
+		"success": true,
+		"data": newL,
+	})
 }

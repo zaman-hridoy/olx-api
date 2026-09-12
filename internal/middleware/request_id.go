@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"net/http"
 )
 
@@ -28,8 +27,6 @@ func RequestId(next http.Handler) http.Handler {
 		if requestId == "" {
 			requestId = generateRequestID()
 		}
-
-		fmt.Println("request_id:", requestId)
 
 		w.Header().Set("X-Request-ID", requestId)
 		ctx := context.WithValue(r.Context(), requestIdKey, requestId)
